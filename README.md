@@ -29,9 +29,10 @@ It is designed to manage intersections, employees, and related data in an effici
 1. Clone the repository:
 2. Open the solution in Visual Studio.
 3. Configure your **appsettings.json** connection string for SQL Server.
-4. Apply EF Core migrations:
-5. Run the project:
-6. Optionally, publish to IIS using a publish profile.
+4. Apply EF Core migrations
+5. Add your google maps API key in map.cshtml
+6. Run the project:
+7. Optionally, publish to IIS using a publish profile.
 
 
 
