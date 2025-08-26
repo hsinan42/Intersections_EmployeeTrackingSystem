@@ -1,0 +1,29 @@
+﻿@using EntityLayer.Concrete
+@model List<Intersection>
+
+@{
+	ViewData["Title"] = "Index";
+	ViewData["Page"] = "index";
+	Layout = "~/Views/Shared/_Layout1.cshtml";
+
+	var formModel = ViewData["FormModel"] as IntersectionViewModel ?? new IntersectionViewModel();
+}
+
+<div class="container mt-5">
+	<div class="d-flex justify-content-end mb-3">
+		<button type="button" class="btn btn-dark"
+				data-bs-toggle="modal" data-bs-target="#formModal">
+			Kavşak Ekle <i class="ti-plus"></i>
+		</button>
+	</div>
+	<div id="intersectionTable">
+		@await Html.PartialAsync("_IntersectionListResponsive", Model)
+	</div>
+
+	@await Html.PartialAsync("_IntersectionFormModal", formModel)
+
+</div>
+
+
+
+

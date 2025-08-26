@@ -1,0 +1,29 @@
+﻿<div class="modal fade" id="diffModal" tabindex="-1" aria-labelledby="diffModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content bg-dark">
+            <div class="modal-header border-0">
+                <h4 class="modal-title w-100 text-center border-bottom border-3 border-warning pb-2" id="diffModalLabel">Değişiklikler</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body" id="diffModalBody">
+                <div class="text-center py-5">İçerik yükleniyor…</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const modal = document.getElementById('diffModal');
+      modal.addEventListener('show.bs.modal', function (event) {
+        const btn = event.relatedTarget;
+        const id = btn?.getAttribute('data-id');
+        const body = document.getElementById('diffModalBody');
+        body.innerHTML = "<div class='text-center py-5'>İçerik yükleniyor…</div>";
+        fetch(`/ChangeRequests/DiffDetails?id=${id}`)
+          .then(r => r.text())
+          .then(html => body.innerHTML = html)
+          .catch(() => body.innerHTML = "<div class='alert alert-danger'>İçerik yüklenemedi.</div>");
+      });
+    });
+</script>

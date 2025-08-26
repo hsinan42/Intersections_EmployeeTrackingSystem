@@ -1,0 +1,90 @@
+﻿.pagination .page-link:focus,
+.pagination .page-link:focus-visible {
+    outline: none !important;
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.75) !important;
+}
+
+.pagination .page-item.active .page-link {
+    background-color:#344179 !important;
+    color:#fff !important;
+    border-color: #344179 !important;
+}
+
+.pagination .page-link {
+    background-color:#28242c !important;
+    color:#fff !important;
+    border-color:#344179 !important;
+}
+.border-warning {
+    border-color:#344179 !important;
+}
+
+#tableBody {
+    background-color: #3B3B3B
+}
+
+    #tableBody tr:hover {
+        background-color: #4F4F4F;
+    }
+
+.modal input,
+.modal textarea,
+.modal select {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    color: #fff;
+    background: rgba(156,156,156,.36);
+    border: 1px solid #000;
+    border-radius: 5px;
+    padding: 10px 12px;
+    font: inherit;
+    line-height: 1.4;
+    outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+
+    /* Placeholder rengi */
+    .modal input::placeholder,
+    .modal textarea::placeholder {
+        color: rgba(255,255,255,.7);
+    }
+
+    /* Focus durumu (istersen sarı kenarlık) */
+    .modal input:focus,
+    .modal textarea:focus,
+    .modal select:focus {
+        border-color: #344179;
+        box-shadow: 0 0 0 3px #202c5f;
+        background: rgba(156,156,156,.48);
+    }
+
+/* Textarea boyutu */
+.modal textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+/* SELECT'e özel: native oku kaldır + kendi okunu ekle */
+.modal select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding-right: 2.25rem; /* oka yer aç */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right .6rem center;
+    background-size: 1rem;
+    background-clip: padding-box;
+}
+
+    .modal select::-ms-expand {
+        display: none;
+    }
+    /* eski IE/Edge oku */
+
+    /* Açılan menü (her tarayıcıda tam kontrol edilemeyebilir) */
+    .modal select option {
+        color: #fff;
+        background-color: #2b2b2b;
+    }

@@ -1,0 +1,123 @@
+﻿@using EntityLayer.Concrete
+@model IEnumerable<Intersection>
+
+<link href="~/css/tablestyle.css" rel="stylesheet" />
+
+<div class="row">
+	<div class="mb-3 col-md-3">
+		<input type="text" class="searchInput form-control bg-dark text-white border-warning" placeholder="Kkc ID veya Kavşak Adı ile ara...">
+	</div>
+	<div class="mb-3 col-md-3 d-flex align-items-center gap-2">
+		<label for="rowsPerPageSelect" class="form-label text-white">Sayfa başına satır:</label>
+		<select id="rowsPerPageSelect" class="form-select text-white form-select-sm w-auto bg-dark border-warning">
+			<option value="5">5</option>
+			<option value="10" selected>10</option>
+			<option value="20">20</option>
+			<option value="50">50</option>
+		</select>
+	</div>
+</div>
+
+<div class="table-responsive d-none d-md-block">
+	<table class="table table-bordered border-warning bg-dark text-white align-middle js-date-table">
+		<thead>
+			<tr>
+				<th scope="col">Kkc ID</th>
+				<th scope="col">Kavşak Adı</th>
+				<th scope="col">Kullanıcı</th>
+				<th scope="col">Detaylar</th>
+				<th scope="col">
+					<a href="#" class="text-warning text-decoration-none sort-date-btn">
+						Tarih <i class="bi bi-arrow-down-up"></i>
+					</a>
+				</th>
+				<th scope="col">İşlemler</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model)
+			{
+				<tr>
+					<td>@item.KkcID</td>
+					<td>@item.Title</td>
+					<td>@item.User.UserName</td>
+					<td>
+						<a href="/Intersections/Details/@item.IntersectionID" class="btn btn-warning btn-sm">
+							<i class="bi bi-eye"></i> Detaylar
+						</a>
+					</td>
+					<td data-sort="@item.CreatedAt.ToString("yyyy-MM-ddTHH:mm")">
+						@item.CreatedAt.ToString("dd.MM.yyyy")
+					</td>
+					<td style="display:flex; justify-content:center;">
+						<button class="btn btn-primary btn-sm mx-1 edit-button"
+								data-id="@item.IntersectionID">
+							Düzenle <i class="bi bi-pencil"></i>
+						</button>
+						<button class="btn btn-warning btn-sm mx-1 btn-make-active"
+								data-id="@item.IntersectionID">
+							Göster <i class="bi bi-eye"></i>
+						</button>
+						<button class="btn btn-danger btn-sm mx-1 btn-hard-delete"
+								data-id="@item.IntersectionID">
+							Sil <i class="bi bi-trash"></i>
+						</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>
+
+<div class="d-block d-md-none">
+	<a href="#" class="btn btn-dark btn-outline-warning text-warning text-decoration-none mb-2 sort-date-btn">
+		Tarih <i class="bi bi-arrow-down-up"></i>
+	</a>
+	<div class="row row-cols-1 g-3">
+		@foreach (var item in Model)
+		{
+			<div class="col" data-sort="@item.CreatedAt.ToString("yyyy-MM-ddTHH:mm")">
+				<div class="card bg-dark border-warning text-white shadow-sm">
+					<div class="card-body">
+						<div class="d-flex justify-content-between align-items-center mb-2">
+							<h5 class="card-title mb-0">@item.Title</h5>
+							<span class="badge bg-warning text-dark">KkcID: @item.KkcID</span>
+						</div>
+						<div>
+							<b>Kullanıcı:</b> @item.User.UserName <br />
+							<b>Tarih:</b> @item.CreatedAt.ToString("dd.MM.yyyy")
+						</div>
+						<div class="mt-3 d-flex flex-wrap gap-2">
+							<div>
+								<a href="/Intersections/Details/@item.IntersectionID" class="btn btn-warning btn-sm">
+									<i class="bi bi-pencil"></i> Detaylar
+								</a>
+								<button class="btn btn-primary btn-sm edit-button"
+										data-id="@item.IntersectionID">
+									Düzenle <i class="ti ti-pencil-alt"></i>
+								</button>
+							</div>
+
+							<div>
+								<button class="btn btn-warning btn-sm btn-make-active"
+										data-id="@item.IntersectionID">
+									Göster <i class="bi bi-eye"></i>
+								</button>
+								<button class="btn btn-danger btn-sm btn-hard-delete"
+										data-id="@item.IntersectionID">
+									Sil <i class="bi bi-trash"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>
+
+<nav>
+	<ul class="pagination justify-content-center mt-3" id="pagination"></ul>
+</nav>
+
+

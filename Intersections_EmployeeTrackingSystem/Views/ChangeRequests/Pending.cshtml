@@ -1,0 +1,160 @@
+﻿@model IEnumerable<EntityLayer.Concrete.IntersectionChangeRequest>
+@{
+    ViewData["Title"] = "Pending";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<link href="~/css/tablestyle.css" rel="stylesheet" />
+
+<div class="container mt-4">
+    <h3 class="mb-3">Bekleyen Değişiklik Talepleri</h3>
+
+    @if (TempData["ok"] != null)
+    {
+        <div class="alert alert-success">@TempData["ok"]</div>
+    }
+    @if (TempData["err"] != null)
+    {
+        <div class="alert alert-danger">@TempData["err"]</div>
+    }
+
+    <!-- Desktop -->
+    <div class="table-responsive d-none d-md-block">
+        <table class="table table-bordered border-warning bg-dark text-white table-sm">
+            <thead>
+                <tr>
+                    <th>Kkc ID</th>
+                    <th>Kavşak</th>
+                    <th>İsteyen</th>
+                    <th>Tür</th>
+                    <th>Tarih</th>
+                    <th>İşlem</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model)
+                {
+                    <tr data-row-id="@r.Id">
+                        <td>@r.Intersection?.KkcID</td>
+                        <td>@r.Intersection?.Title</td>
+                        <td>@r.RequestedBy?.UserName</td>
+                        <td>@r.ChangeType</td>
+                        <td>@r.RequestedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                        <td style="display:flex; gap:.5rem; justify-content:center">
+                            <form asp-action="Approve" method="post" class="form-approve">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@r.Id" />
+                                <button class="btn btn-success btn-sm">Onayla</button>
+                            </form>
+                            <form asp-action="Reject" method="post" class="form-reject">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@r.Id" />
+                                <button class="btn btn-danger btn-sm">Reddet</button>
+                            </form>
+                            <button type="button" class="btn btn-warning btn-sm"
+                                    data-bs-toggle="modal" data-bs-target="#diffModal"
+                                    data-id="@r.Id">
+                                Göster <i class="bi bi-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Mobile -->
+    <div class="d-block d-md-none">
+        <div class="row row-cols-1 g-3">
+            @foreach (var r in Model)
+            {
+                <div class="col">
+                    <div class="card bg-dark border-warning text-white shadow-sm" data-row-id="@r.Id">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h6 class="card-title mb-0">
+                                    @(r.Intersection?.Title ?? "Kavşak")
+                                </h6>
+                                <span class="badge bg-warning text-dark">@r.ChangeType</span>
+                            </div>
+                            <p class="mb-1"><strong>Kkc ID:</strong> @r.Intersection?.KkcID</p>
+                            <p class="mb-1"><strong>İsteyen:</strong> @r.RequestedBy?.UserName</p>
+                            <p class="mb-2"><strong>Tarih:</strong> @r.RequestedAt.ToString("dd.MM.yyyy HH:mm")</p>
+                            <div class="d-flex gap-2">
+                                <form asp-action="Approve" method="post" class="flex-fill form-approve">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@r.Id" />
+                                    <button class="btn btn-success btn-sm w-100">Onayla</button>
+                                </form>
+                                <form asp-action="Reject" method="post" class="flex-fill form-reject">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@r.Id" />
+                                    <button class="btn btn-danger btn-sm w-100">Reddet</button>
+                                </form>
+                                <button type="button" class="btn btn-warning btn-sm w-100"
+                                        data-bs-toggle="modal" data-bs-target="#diffModal"
+                                        data-id="@r.Id">
+                                    Göster <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    @await Html.PartialAsync("_DiffDetails")
+</div>
+
+
+@section Scripts {
+    <script>
+        function removeRowFor(form, id) {
+          const selector = `[data-row-id="${id}"]`;
+          const $row = $(selector).length ? $(selector) : $(form).closest('tr, .card');
+          $row.fadeOut(200, function () {
+            $(this).remove();
+            checkEmpty();
+          });
+        }
+
+        function checkEmpty() {
+          if ($('tr[data-row-id], .card[data-row-id]').length === 0) {
+            $('table tbody').html('<tr><td colspan="6" class="text-center">Bekleyen talep yok</td></tr>');
+          }
+        }
+
+        $(document).on('submit', '.form-approve', function (e) {
+          e.preventDefault();
+          const $f = $(this);
+          $.post($f.attr('action'), $f.serialize())
+           .done(res => {
+             if (res && res.success) {
+               const id = res.id || $f.find('[name="id"]').val();
+               removeRowFor($f, id);
+               $('#diffModal').modal('hide');
+             } else {
+               alert(res?.message || 'İşlem başarısız');
+             }
+           })
+           .fail(() => alert('Sunucu hatası'));
+        });
+
+        $(document).on('submit', '.form-reject', function (e) {
+          e.preventDefault();
+          const $f = $(this);
+          $.post($f.attr('action'), $f.serialize())
+           .done(res => {
+             if (res && res.success) {
+               const id = res.id || $f.find('[name="id"]').val();
+               removeRowFor($f, id);
+               $('#diffModal').modal('hide');
+             } else {
+               alert(res?.message || 'İşlem başarısız');
+             }
+           })
+           .fail(() => alert('Sunucu hatası'));
+        });
+
+    </script>
+}

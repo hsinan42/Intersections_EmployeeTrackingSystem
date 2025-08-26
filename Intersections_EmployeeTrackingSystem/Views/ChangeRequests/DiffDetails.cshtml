@@ -1,0 +1,123 @@
+﻿@model BusinessLayer.DTOs.PendingChangeDetailVM
+@using EntityLayer.Enums
+
+<div class="container mt-2">
+    <h4 class="mb-3">Talep #@Model.RequestId – @Model.IntersectionTitle</h4>
+    <p class="mb-1"><strong>İsteyen:</strong> @Model.RequestedByUserName</p>
+    <p class="mb-3"><strong>Tarih:</strong> @(Model.RequestedAt.ToLocalTime())</p>
+
+    @if (Model.ChangeType == ChangeType.Update)
+    {
+        <h5>Alan Değişiklikleri</h5>
+        @if (Model.ScalarDiffs?.Any() == true)
+        {
+            <ul>
+                @foreach (var d in Model.ScalarDiffs)
+                {
+                    <li>
+                        <code>@(string.IsNullOrEmpty(d.Label) ? d.Path : d.Label)</code>:
+                        <span class="text-danger">@d.OldValue</span> → <span class="text-success">@d.NewValue</span>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+
+            <p><em>Yok</em></p>
+        }
+
+        <h5>Altyapı</h5>
+        @if (Model.SubstructureDiffs?.Any() == true)
+        {
+            <ul>
+                @foreach (var d in Model.SubstructureDiffs)
+                {
+                    <li>
+                        <code>@(string.IsNullOrEmpty(d.Label) ? d.Path : d.Label)</code>:
+                        <span class="text-danger">@d.OldValue</span> → <span class="text-success">@d.NewValue</span>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+
+            <p><em>Yok</em></p>
+        }
+
+        <h5>Konum</h5>
+        @if (Model.LocationDiffs?.Any() == true)
+        {
+            <ul>
+                @foreach (var c in Model.LocationDiffs)
+                {
+                    <li>
+                        @* <strong>@c.ChangeType</strong> (ID: @(c.LocationID?.ToString() ?? "-")) *@
+                        @if (c.FieldDiffs?.Any() == true)
+                        {
+                            <ul>
+                                @foreach (var d in c.FieldDiffs)
+                                {
+                                    <li>
+                                        <code>@(string.IsNullOrEmpty(d.Label) ? d.Path : d.Label)</code>:
+                                        <span class="text-danger">@d.OldValue</span> → <span class="text-success">@d.NewValue</span>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+
+            <p><em>Yok</em></p>
+        }
+
+        <h5>Görseller</h5>
+        @if (Model.ImageDiffs?.Any() == true)
+        {
+            <ul>
+                @foreach (var im in Model.ImageDiffs)
+                {
+                    <li>
+                        @* <strong>@im.ChangeType</strong> *@
+                        @if (im.ImageId.HasValue)
+                        {
+                            <span>(ID: @im.ImageId)</span>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(im.Path))
+                        {
+                            <img src="@im.Path" class="img-fluid img-thumbnail" style="max-width:20%" />
+                        }
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+
+            <p><em>Yok</em></p>
+        }
+    }
+    else
+    {
+        <p><em>@Model.ChangeType</em> isteği.</p>
+    }
+
+    <div class="d-flex gap-2 mt-3">
+        <form asp-controller="ChangeRequests" asp-action="Approve" method="post" class="form-approve">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.RequestId" />
+            <button class="btn btn-success">Onayla</button>
+        </form>
+        <form asp-controller="ChangeRequests" asp-action="Reject" method="post" class="d-flex gap-2 form-reject">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.RequestId" />
+            <button class="btn btn-danger">Reddet</button>
+        </form>
+    </div>
+</div>
+

@@ -1,0 +1,304 @@
+﻿@using Intersections_EmployeeTrackingSystem.Helpers
+@using System.Security.Claims
+@model DetailsVM
+
+@{
+	ViewData["Title"] = "Details";
+	ViewData["Page"] = "details";
+	Layout = "~/Views/Shared/_Layout1.cshtml";
+
+	var role = User.FindFirst(ClaimTypes.Role)!.Value;
+
+	var status = Model.IntersectionStatus ? "Aktif" : "Pasif";
+	var statusStyle = Model.IntersectionStatus ? "text-success" : "text-danger";
+}
+
+<style>
+	dl.row > dt,
+	dl.row > dd {
+		border-bottom: 1px solid #555;
+		padding: 8px 0;
+		margin: 0;
+	}
+
+		dl.row > dt[class*="col-"],
+		dl.row > dd[class*="col-"] {
+			padding-left: 0 !important;
+			padding-right: 0 !important;
+		}
+
+	dl.row > dd {
+		padding-left: 10px !important;
+	}
+</style>
+
+<div class="container mt-4">
+
+	<div class="card bg-dark text-white border-warning shadow mb-4">
+		<div class="card-header border-warning">
+			<h3 class="mb-0">@Model.Title <span class="ms-5 @statusStyle">- @status -</span></h3>
+		</div>
+		<div class="card-body">
+			<dl class="row mb-0">
+				<dt class="col-sm-3">Kavşak Adı:</dt>
+				<dd class="col-sm-9">@Model.Title</dd>
+
+				<dt class="col-sm-3">Kkc ID:</dt>
+				<dd class="col-sm-9">@Model.KkcID</dd>
+
+				<dt class="col-sm-3">Açıklama:</dt>
+				<dd class="col-sm-9">@Model.Description</dd>
+
+				<dt class="col-sm-3">Ekleyen Kullanıcı:</dt>
+				<dd class="col-sm-9">@Model.UserName</dd>
+
+				<dt class="col-sm-3">Oluşturulma:</dt>
+				<dd class="col-sm-9">@Model.CreatedAt.ToString("dd.MM.yyyy")</dd>
+
+				<dt class="col-sm-3">Son Güncelleme:</dt>
+				<dd class="col-sm-9">@Model.UpdatedAt.ToString("dd.MM.yyyy")</dd>
+			</dl>
+		</div>
+	</div>
+
+	<!-- Fotoğraflar -->
+	@if (Model.IntersectionImages != null && Model.IntersectionImages.Count > 0)
+	{
+		<div class="card bg-dark text-white border-warning shadow mb-4">
+			<div class="card-header border-warning">
+				<h5 class="mb-0">Fotoğraflar</h5>
+			</div>
+			<div class="card-body">
+				<div class="row g-3">
+					@foreach (var img in Model.IntersectionImages)
+					{
+						<div class="col-6 col-md-3">
+							<div class="card bg-dark border-warning h-100">
+								<div class="ratio ratio-1x1">
+									<img src="@Url.Content(img.ImagePath)"
+										 class="card-img-top"
+										 style="object-fit:cover; border-radius:.5rem;"
+										 alt="Fotoğraf" />
+								</div>
+							</div>
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	}
+
+	<!-- Kavşak Detayları -->
+	<div class="row g-3">
+		<div class="col-md-6">
+			<div class="card bg-dark text-white border-warning shadow h-100">
+				<div class="card-header border-warning">
+					<h6 class="mb-0">Genel Bilgiler</h6>
+				</div>
+				<div class="card-body">
+					<dl class="row mb-0">
+						<dt class="col-5">Yol Adı:</dt>
+						<dd class="col-7">@Model.RoadName</dd>
+
+						<dt class="col-5">Bağlı Kurum:</dt>
+						<dd class="col-7">@Model.BondedOrganisation</dd>
+
+						<dt class="col-5">Cihaz Tipi:</dt>
+						<dd class="col-7">@Model.DeviceType.GetDisplayName()</dd>
+
+						<dt class="col-5">Kamera Sayısı:</dt>
+						<dd class="col-7">@Model.CamCount</dd>
+
+						<dt class="col-5">Loop Sayısı:</dt>
+						<dd class="col-7">@Model.LoopCount</dd>
+
+						<dt class="col-5">Grup Sayısı:</dt>
+						<dd class="col-7">@Model.GroupCount</dd>
+
+						<dt class="col-5">Yaya Butonu:</dt>
+						<dd class="col-7">
+							@(Model.PedButton
+														? Html.Raw("<span class='badge bg-success'>Var</span>")
+														: Html.Raw("<span class='badge bg-secondary'>Yok</span>"))
+																					  						</dd>
+
+						<dt class="col-5">UPS:</dt>
+						<dd class="col-7">
+							@(Model.UPS
+														? Html.Raw("<span class='badge bg-success'>Var</span>")
+														: Html.Raw("<span class='badge bg-secondary'>Yok</span>"))
+						</dd>
+					</dl>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-6">
+			<div class="card bg-dark text-white border-warning shadow h-100">
+				<div class="card-header border-warning">
+					<h6 class="mb-0">Cihaz Kimlik</h6>
+				</div>
+				<div class="card-body">
+					<dl class="row mb-0">
+						<dt class="col-5">Seri No:</dt>
+						<dd class="col-7">@Model.SerialNumber</dd>
+
+						<dt class="col-5">CPU Hex:</dt>
+						<dd class="col-7">@Model.CpuHex</dd>
+
+						<dt class="col-5">Driver Hex:</dt>
+						<dd class="col-7">@Model.DriverHex</dd>
+					</dl>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Altyapı -->
+	@if (Model.Subtructure != null)
+	{
+		<div class="card bg-dark text-white border-warning shadow mt-4">
+			<div class="card-header border-warning">
+				<h5 class="mb-0">Altyapı</h5>
+			</div>
+			<div class="card-body">
+				<dl class="row mb-0">
+					<dt class="col-3">Yapan:</dt>
+					<dd class="col-9">@Model.Subtructure.SubstructureBuilder</dd>
+
+					<dt class="col-3">Başlama:</dt>
+					<dd class="col-9">
+						@(Model.Subtructure?.SubstructureStartDate?.ToString("dd.MM.yyyy") ?? "-")
+					</dd>
+
+					<dt class="col-3">Bitiş:</dt>
+					<dd class="col-9">
+						@(Model.Subtructure?.SubstructureFinishDate?.ToString("dd.MM.yyyy") ?? "-")
+					</dd>
+				</dl>
+			</div>
+		</div>
+	}
+
+	<!-- Lokasyon -->
+	@if (Model.Locations != null)
+	{
+			<div class="card bg-dark text-white border-warning shadow mt-4">
+				<div class="card-header border-warning">
+					<h5 class="mb-0">Lokasyon</h5>
+				</div>
+				<div class="card-body">
+					<dl class="row mb-0">
+						<dt class="col-3">Şehir:</dt>
+						<dd class="col-9">@Model.Locations[0].City</dd>
+						<dt class="col-3">İlçe:</dt>
+						<dd class="col-9">@Model.Locations[0].District</dd>
+						<dt class="col-3">Adres:</dt>
+						<dd class="col-9">@Model.Locations[0].Address</dd>
+						<dt class="col-3">Enlem:</dt>
+						<dd class="col-9">@Model.Locations[0].Latitude</dd>
+						<dt class="col-3">Boylam:</dt>
+						<dd class="col-9">@Model.Locations[0].Longitude</dd>
+					</dl>
+				</div>
+			</div>
+	}
+
+		<!-- Reports -->
+
+		<div class="card bg-dark text-white border-warning shadow mt-4">
+			<div class="card-header border-warning">
+				<h5 class="mb-0">Raporlar</h5>
+			</div>
+			@if (Model.Reports != null && Model.Reports.Count > 0)
+			{
+				<div class="card-body">
+					<div class="table-responsive d-none d-md-block">
+						<table class="table table-dark table-bordered table-sm align-middle mb-0">
+							<thead>
+								<tr>
+									<th style="width:60px">#</th>
+									<th>Tarih</th>
+									<th>Kullanıcı</th>
+									<th>Açıklama</th>
+								</tr>
+							</thead>
+							<tbody>
+								@for (int i = 0; i < Model.Reports.Count; i++)
+								{
+									var r = Model.Reports[i];
+									<tr>
+										<td>@(i + 1)</td>
+										<td>@r.ReportDate.ToString("dd.MM.yyyy")</td>
+										<td>@r.UserName</td>
+										<td>@r.ReportDescription</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+
+					<div class="d-block d-md-none">
+						<div class="row row-cols-1 g-3 mt-2">
+							@for (int i = 0; i < Model.Reports.Count; i++)
+							{
+								var r = Model.Reports[i];
+								<div class="col">
+									<div class="card bg-dark border-warning text-white shadow-sm">
+										<div class="card-body">
+											<h6 class="card-title mb-2">Rapor @(i + 1)</h6>
+											<p class="mb-1"><strong>Tarih:</strong> @r.ReportDate.ToString("dd.MM.yyyy")</p>
+											<p class="mb-1"><strong>Kullanıcı:</strong> @r.UserName</p>
+											<p class="mb-0"><strong>Açıklama:</strong> @r.ReportDescription</p>
+										</div>
+									</div>
+								</div>
+							}
+						</div>
+					</div>
+
+				</div>
+			}
+			else
+			{
+				<div class="alert alert-secondary border-warning text-white bg-dark mt-3">
+					Bu kavşağa rapor eklenmemiş
+				</div>
+			}
+
+	</div>
+	<div class="d-flex flex-wrap gap-2 my-4">
+		<a href="@Url.Action("Index")" class="btn btn-secondary">
+			<i class="bi bi-arrow-left"></i> Kavşaklara Dön
+		</a>
+
+		<button class="btn btn-primary edit-button" data-id="@Model.IntersectionID">
+			<i class="bi bi-pencil"></i> Düzenle
+		</button>
+
+		<button class="btn btn-success report-button" data-id="@Model.IntersectionID">
+			<i class=" bi bi-body-text"></i> Rapor Ekle
+		</button>
+
+		@if (!Model.IntersectionStatus && role == "Admin")
+		{
+			<button class="btn btn-warning btn-make-active" data-id="@Model.IntersectionID">
+				<i class="bi bi-eye"></i> Göster
+			</button>
+		}
+		else if (Model.IntersectionStatus && role == "Admin" || role == "User")
+		{
+			<button class="btn btn-warning btn-soft-delete" data-id="@Model.IntersectionID">
+				<i class="bi bi-eye-slash"></i> Gizle
+			</button>
+		}
+		@if (role == "Admin")
+		{
+			<button class="btn btn-danger btn-hard-delete" data-id="@Model.IntersectionID">
+				<i class="bi bi-trash"></i> Sil
+			</button>
+		}
+
+	</div>
+
+</div>

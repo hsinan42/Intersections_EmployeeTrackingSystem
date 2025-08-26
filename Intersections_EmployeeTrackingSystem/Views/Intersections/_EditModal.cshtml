@@ -1,0 +1,219 @@
+﻿@using EntityLayer.Enums
+@model IntersectionViewModel
+
+@{
+    Layout = null;
+}
+
+<style>
+    /* #editForm input{
+        color:#fff;
+        border: solid 1px black;
+        border-radius: 5px;
+        background: rgba(156, 156, 156, 0.36);
+    }
+    #editForm textarea{
+        color:#fff;
+        border: solid 1px black;
+        border-radius: 5px;
+        background: rgba(156, 156, 156, 0.36);
+    } */
+
+    .btn-deleteImage {
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 50%;
+        padding: 0;
+        border: none;
+        font-weight: bold;
+        font-size: 0.875rem;
+        line-height: 1;
+        text-align: center;
+        cursor: pointer;
+        color: #dc3545;
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.1);
+        transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+        .btn-deleteImage:hover {
+            background-color: #f8d7da;
+            transform: scale(1.1);
+        }
+</style>
+
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-0">
+                <h4 class="modal-title w-100 text-center border-bottom border-3 border-warning pb-2" id="editModalLabel">Kavşak Düzenle</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+
+            <div class="modal-body">
+                <form method="post" asp-controller="Intersections" asp-action="Edit" id="editForm" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+
+                    @* ID Bilgileri *@
+                    <input asp-for="IntersectionID" type="hidden" />
+                    <input asp-for="UserID" type="hidden" />
+
+                    <div class="row">
+                        <div class="col mb-3">
+                            <label asp-for="Title" class="form-label">Kavşak Adı</label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                        <div class="col mb-3">
+                            <label asp-for="KkcID" class="form-label">Kkc ID</label>
+                            <input asp-for="KkcID" class="form-control" min="0" />
+                            <span asp-validation-for="KkcID" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">Açıklama</label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    @* Kavşak Detayları *@
+                    <h5 class="mt-4 mb-2 border-bottom border-2 border-warning pb-1">Kavşak Detayları</h5>
+                    <div class="row">
+                        <div class="col">
+                            <label asp-for="RoadName" class="form-label">Yol Adı</label>
+                            <input asp-for="RoadName" class="form-control" />
+                        </div>
+                        <div class="col">
+                            <label asp-for="BondedOrganisation" class="form-label">Bağlı Kurum</label>
+                            <input asp-for="BondedOrganisation" class="form-control" />
+                        </div>
+                        <div class="col">
+                            <label asp-for="DeviceType"></label>
+                            <select asp-for="DeviceType" class="form-control"
+                                    asp-items="Html.GetEnumSelectList<DeviceType>()">
+                            </select>
+                            <span asp-validation-for="DeviceType" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <label asp-for="CamCount" class="form-label">Kamera</label>
+                            <input asp-for="CamCount" class="form-control" />
+                        </div>
+                        <div class="col">
+                            <label asp-for="LoopCount" class="form-label">Loop</label>
+                            <input asp-for="LoopCount" class="form-control" />
+                        </div>
+                        <div class="col">
+                            <label asp-for="GroupCount" class="form-label">Grup</label>
+                            <input asp-for="GroupCount" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <label asp-for="SerialNumber" class="form-label">Seri Num.</label>
+                            <input asp-for="SerialNumber" class="form-control" />
+                        </div>
+                        <div class="col">
+                            <label asp-for="CpuHex" class="form-label">Cpu Hex</label>
+                            <input asp-for="CpuHex" class="form-control" />
+                        </div>
+                        <div class="col">
+                            <label asp-for="DriverHex" class="form-label">Driver Hex</label>
+                            <input asp-for="DriverHex" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-1">
+                        <div class="col-auto">
+                            <div class="form-check">
+                                <input asp-for="PedButton" />
+                                <label class="form-check-label" asp-for="PedButton">Yaya Butonu</label>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-check">
+                                <input asp-for="UPS" />
+                                <label class="form-check-label" asp-for="UPS">UPS</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    @* Altyapı *@
+                    <h5 class="mt-4 mb-2 border-bottom border-2 border-warning pb-1">Altyapı</h5>
+                    <div class="row g-3 align-items-end">
+                        <input type="hidden" asp-for="Subtructure.SubstructureID" value="@Model.Subtructure?.SubstructureID" />
+                        <div class="col-12 col-md">
+                            <label asp-for="Subtructure.SubstructureBuilder" class="form-label">Altyapıyı Yapan</label>
+                            <input asp-for="Subtructure.SubstructureBuilder" class="form-control" />
+                        </div>
+                        <div class="col-12 col-md">
+                            <label asp-for="Subtructure.SubstructureStartDate" class="form-label">Başlama Tarihi</label>
+                            <input asp-for="Subtructure.SubstructureStartDate" type="date" class="form-control" />
+                        </div>
+                        <div class="col-12 col-md">
+                            <label asp-for="Subtructure.SubstructureFinishDate" class="form-label">Bitiş Tarihi</label>
+                            <input asp-for="Subtructure.SubstructureFinishDate" type="date" class="form-control" />
+                        </div>
+                    </div>
+
+                    @* Konum Bilgileri *@
+                    <h5 class="mt-4 mb-2 border-bottom border-2 border-warning pb-1">Konum Bilgileri</h5>
+                    <input asp-for="Locations[0].LocationID" type="hidden" />
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Locations[0].City" class="form-label">Şehir</label>
+                            <input asp-for="Locations[0].City" class="form-control" />
+                            <span asp-validation-for="Locations[0].City" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Locations[0].District" class="form-label">İlçe</label>
+                            <input asp-for="Locations[0].District" class="form-control" />
+                            <span asp-validation-for="Locations[0].District" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Locations[0].Address" class="form-label">Adres</label>
+                        <textarea asp-for="Locations[0].Address" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Locations[0].Address" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Locations[0].Latitude" class="form-label">Enlem</label>
+                            <input asp-for="Locations[0].Latitude" class="form-control" />
+                            <span asp-validation-for="Locations[0].Latitude" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Locations[0].Longitude" class="form-label">Boylam</label>
+                            <input asp-for="Locations[0].Longitude" class="form-control" />
+                            <span asp-validation-for="Locations[0].Longitude" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    @* Görseller *@
+                    <h5 class="mt-4 mb-2">Görsel Yükle</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Ekli Resimler</label>
+                        <div id="existing-images" class="mb-3 d-flex flex-wrap gap-2 text-warning"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ImageFiles" class="form-label">Kavşak Görseli</label>
+                        <input asp-for="ImageFiles" type="file" class="imageUpload" multiple />
+                        <div class="d-flex flex-wrap gap-2 mt-2 image-preview"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-outline-warning w-100">Güncelle</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

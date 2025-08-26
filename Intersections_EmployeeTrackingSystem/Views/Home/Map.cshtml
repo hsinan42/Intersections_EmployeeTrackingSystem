@@ -1,0 +1,26 @@
+﻿@{
+	ViewData["Title"] = "Map";
+	Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+<style>
+	.title {
+		font-size: 17px;
+		font-weight: 600;
+		margin-bottom: 1px !important;
+	}
+
+	.city {
+		margin-bottom: 1px !important;
+	}
+</style>
+
+<div class="border-warning" id="map" style="height: 100%; width: 100%;"></div>
+
+
+
+<script defer src="https://maps.googleapis.com/maps/api/js?key=API_KEY&map_ids=dc3581395fd68c25176f4d5b"></script>
+
+<script defer src="/js/infobox_packed.js"></script>
+
+<script src="~/js/map.js" asp-append-version="true" defer></script>

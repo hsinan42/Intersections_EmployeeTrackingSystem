@@ -1,0 +1,46 @@
+﻿html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#blur-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('../Contents/Images/5096160.jpg');
+    background-position: center;
+    background-size: cover;
+    filter: blur(12px) brightness(0.7);
+    z-index: -1;
+    border:solid 2px black;
+}
+
+.content {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color:white;
+}
+
+.card.bg-glass {
+    background: rgba(16,22,32,0.85);
+    color: #fff;
+    backdrop-filter: blur(2px);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+    border-radius: 1rem;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+#map {
+    position:absolute;
+    width: 100%;
+    height: 400px;
+}
+.content{
+    justify-content:flex-start;
+}
+

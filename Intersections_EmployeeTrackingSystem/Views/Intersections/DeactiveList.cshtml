@@ -1,0 +1,44 @@
+﻿@using EntityLayer.Concrete
+@model List<Intersection>
+
+@{
+	ViewData["Title"] = "DeactiveList";
+	ViewData["Page"] = "deactive";
+	Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+<style>
+
+	#addForm input {
+		color: #fff;
+		border: solid 1px black;
+		border-radius: 5px;
+		background: rgba(156, 156, 156, 0.36);
+	}
+
+	#addForm textarea {
+		color: #fff;
+		border: solid 1px black;
+		border-radius: 5px;
+		background: rgba(156, 156, 156, 0.36);
+	}
+
+	#tableBody {
+		background-color: #3B3B3B
+	}
+
+		#tableBody tr:hover {
+			background-color: #4F4F4F;
+		}
+</style>
+
+<div class="container mt-5">
+	<div id="intersectionTable">
+		@await Html.PartialAsync("_DeactiveListResponsive", Model)
+	</div>
+
+</div>
+@section Scripts{
+	<script src="~/js/intersections.js"></script>
+}
+

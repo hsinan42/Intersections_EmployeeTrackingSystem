@@ -1,0 +1,125 @@
+﻿@model List<EmployeeViewModel>
+
+@{
+	Layout = null;
+
+	var statusClass = string.Empty;
+}
+<link href="~/css/tablestyle.css" rel="stylesheet" />
+
+@*Desktop*@
+<div class="table-responsive-xxl d-none d-md-block">
+	<table class="table table-bordered border-warning bg-dark text-white align-middle">
+		<thead>
+			<tr>
+				<th class="col-1" scope="col">Çalışan</th>
+				<th class="col-1" scope="col">Katıldığı Tarih</th>
+				<th class="col-3" scope="col">Son ekledikleri</th>
+				<th class="col-1" scope="col">İşlemler</th>
+			</tr>
+		</thead>
+		<tbody>
+
+			@foreach (var item in Model)
+			{
+
+				<tr>
+					<td class="text-center">
+						<h5 class="rounded-1 bg-secondary text-light p-1" style="width:fit-content">@item.UserName</h5>
+					</td>
+					<td>@item.CreatedAt.ToString("dd.MM.yyyy")</td>
+					<td>
+						<div class="row gap-1">
+							@for (int i = 0; i < Math.Min(3, item.EmployeIntersections.Count); i++)
+							{
+								if (item.EmployeIntersections[i].IntersectionStatus)
+								{
+									statusClass = "btn btn-outline-primary btn-sm";
+								}
+								else
+								{
+									statusClass = "btn btn-outline-danger btn-sm";
+								}
+
+								<div>
+									<a href="/Intersections/Details/@item.EmployeIntersections[i].IntersectionID"
+									   class="@statusClass">
+										@(item.EmployeIntersections[i].Title + " - " + item.EmployeIntersections[i].KkcID)
+										<i class="bi bi-arrow-right"></i>
+									</a>
+								</div>
+							}
+						</div>
+					</td>
+					<td class="text-center">
+						<div class="d-flex justify-content-center gap-2">
+							<a href="/Employee/GetEmployee/@item.UserID" class="btn btn-success btn-sm mx-1">
+								Çalışan <i class="bi bi-arrow-right"></i>
+							</a>
+							<button class="btn btn-danger btn-sm mx-1 btn-user-delete"
+									data-id="@item.UserID">
+								Sil <i class="bi bi-trash"></i>
+							</button>
+						</div>
+					</td>
+				</tr>
+			}
+		</tbody>
+
+	</table>
+</div>
+
+@*Mobile*@
+<div class="d-block d-md-none">
+	<div class="row row-cols-1 g-3">
+		@foreach (var item in Model)
+		{
+			<div class="col">
+				<div class="card bg-dark border-warning text-white shadow-sm">
+					<div class="card-body">
+						<div class="d-flex justify-content-between align-items-center mb-2">
+							<h5 class="card-title mb-0 rounded-1 p-1 bg-secondary text-light">@item.UserName</h5>
+							<span class="badge bg-warning text-dark">Katıldığı Tarih: @item.CreatedAt.ToString("dd.MM.yyyy")</span>
+						</div>
+
+						<div class="mt-3 d-flex flex-wrap gap-1">
+							<div class="row gap-1">
+								@for (int i = 0; i < Math.Min(3, item.EmployeIntersections.Count); i++)
+								{
+									if (item.EmployeIntersections[i].IntersectionStatus)
+									{
+										statusClass = "btn btn-outline-primary btn-sm";
+									}
+									else
+									{
+										statusClass = "btn btn-outline-danger btn-sm";
+									}
+
+									<div>
+										<a href="/Intersections/Details/@item.EmployeIntersections[i].IntersectionID"
+										   class="@statusClass">
+											@(item.EmployeIntersections[i].Title + " - " + item.EmployeIntersections[i].KkcID)
+											<i class="bi bi-arrow-right"></i>
+										</a>
+									</div>
+								}
+							</div>
+						</div>
+
+						<div class="mt-3 d-flex flex-wrap gap-2">
+							<div>
+								<a href="/Employee/GetEmployee/@item.UserID" class="btn btn-success btn-sm mx-1">
+									Çalışan <i class="bi bi-arrow-right"></i>
+								</a>
+								<button class="btn btn-danger btn-sm mx-1 btn-user-delete"
+										data-id="@item.UserID">
+									Sil <i class="bi bi-trash"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>

@@ -1,0 +1,15 @@
+﻿@model List<EmployeeViewModel>
+
+@{
+	ViewData["Title"] = "AllEmployees";
+	Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<div class="container mt-5">
+	<div id="userTable">
+		@await Html.PartialAsync("_EmployeeListResponsive", Model)
+	</div>
+</div>
+
+@section Scripts {
+	<script src="~/js/employeepage.js"></script>
+}

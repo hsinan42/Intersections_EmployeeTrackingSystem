@@ -1,0 +1,164 @@
+﻿@using EntityLayer.Enums
+@model Intersections_EmployeeTrackingSystem.Models.IntersectionViewModel
+
+<style>
+	.fixed-bottom {
+		padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+	}
+</style>
+
+<div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-xl">
+		<div class="modal-content bg-dark">
+			<div class="modal-header border-0">
+				<h4 class="modal-title w-100 text-center border-bottom border-3 border-warning pb-2" id="formModalLabel">Yeni Kavşak</h4>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+			</div>
+			<div class="modal-body">
+				<form method="post" asp-controller="Intersections" asp-action="AddIntersection" id="addForm" enctype="multipart/form-data">
+					<div class="row">
+						<div class="col mb-3">
+							<label for="Title" class="form-label">Kavşak Adı</label>
+							<input type="text" class="form-control" id="Title" name="Title">
+							<span asp-validation-for="Title" class="text-danger"></span>
+						</div>
+						<div class="col mb-3">
+							<label for="KkcID" class="form-label">Kkc ID</label>
+							<input type="number" min="0" class="form-control" id="KkcID" name="KkcID">
+							<span asp-validation-for="KkcID" class="text-danger"></span>
+						</div>
+					</div>
+
+					<div class="mb-3">
+						<label for="Description" class="form-label">Açıklama</label>
+						<textarea class="form-control" id="Description" name="Description" rows="3"></textarea>
+						<span asp-validation-for="Description" class="text-danger"></span>
+					</div>
+					<h5 class="mt-4 mb-2 border-bottom border-2 border-warning pb-1">Kavşak Detayları</h5>
+					<div class="row">
+						<div class="col">
+							<label for="RoadName" class="form-label">Yol Adı</label>
+							<input type="text" class="form-control" id="RoadName" name="RoadName">
+						</div>
+						<div class="col">
+							<label for="BondedOrganisation" class="form-label">Bağlı Kurum</label>
+							<input type="text" class="form-control" id="BondedOrganisation" name="BondedOrganisation">
+						</div>
+						<div class="col">
+							<label asp-for="DeviceType"></label>
+							<select asp-for="DeviceType" class="form-control"
+									asp-items="Html.GetEnumSelectList<DeviceType>()">
+							</select>
+							<span asp-validation-for="DeviceType" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="row ">
+						<div class="col">
+							<label for="CamCount" class="form-label">Kamera</label>
+							<input type="number" class="form-control" id="CamCount" name="CamCount" placeholder="Adet gir">
+						</div>
+						<div class="col">
+							<label for="LoopCount" class="form-label">Loop</label>
+							<input type="number" class="form-control" id="LoopCount" name="LoopCount" placeholder="Adet gir">
+						</div>
+						<div class="col">
+							<label for="GroupCount" class="form-label">Grup</label>
+							<input type="number" class="form-control" id="GroupCount" name="GroupCount" placeholder="Adet gir">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col">
+							<label for="SerialNumber" class="form-label">Seri Num.</label>
+							<input type="text" class="form-control" id="SerialNumber" name="SerialNumber">
+						</div>
+						<div class="col">
+							<label for="CpuHex" class="form-label">Cpu Hex</label>
+							<input type="text" class="form-control" id="CpuHex" name="CpuHex">
+						</div>
+						<div class="col">
+							<label for="DriverHex" class="form-label">Driver Hex</label>
+							<input type="text" class="form-control" id="DriverHex" name="DriverHex">
+						</div>
+					</div>
+					<div class="row g-3 mt-1">
+						<div class="col-auto">
+							<div class="form-check">
+								<input type="checkbox" id="PedButton" name="PedButton">
+								<label class="form-check-label" for="PedButton">Yaya Butonu</label>
+							</div>
+						</div>
+
+						<div class="col-auto">
+							<div class="form-check">
+								<input type="checkbox" id="UPS" name="UPS">
+								<label class="form-check-label" for="UPS">UPS</label>
+							</div>
+						</div>
+					</div>
+
+					@* Subtructure *@
+					<h5 class="mt-4 mb-2 border-bottom border-2 border-warning pb-1">Altyapı</h5>
+					<div class="row g-3 align-items-end">
+						<div class="col-12 col-md">
+							<label for="SubstructureBuilder" class="form-label">Altyapıyı Yapan</label>
+							<input asp-for="Subtructure.SubstructureBuilder" class="form-control" />
+						</div>
+						<div class="col-12 col-md">
+							<label for="SubstructureStartDate" class="form-label">Başlama Tarihi</label>
+							<input asp-for="Subtructure.SubstructureStartDate" type="date" class="form-control" />
+						</div>
+						<div class="col-12 col-md">
+							<label for="SubstructureFinishDate" class="form-label">Bitiş Tarihi</label>
+							<input asp-for="Subtructure.SubstructureFinishDate" type="date" class="form-control" />
+						</div>
+					</div>
+
+					<!-- Location Bilgileri -->
+					<h5 class="mt-4 mb-2 border-bottom border-2 border-warning pb-1">Konum Bilgileri</h5>
+					<div class="row">
+						<div class="col-md-6 mb-3">
+							<label for="City" class="form-label">Şehir</label>
+							<input type="text" class="form-control" id="City" name="Locations[0].City">
+							<span asp-validation-for="Locations[0].City" class="text-danger"></span>
+						</div>
+						<div class="col-md-6 mb-3">
+							<label for="District" class="form-label">İlçe</label>
+							<input type="text" class="form-control" id="District" name="Locations[0].District">
+							<span asp-validation-for="Locations[0].District" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="mb-3">
+						<label for="Address" class="form-label">Adres</label>
+						<textarea class="form-control" id="Address" name="Locations[0].Address" rows="3"></textarea>
+						<span asp-validation-for="Locations[0].Address" class="text-danger"></span>
+					</div>
+					<div class="row">
+						<div class="col-md-6 mb-3">
+							<label for="Latitude" class="form-label">Enlem</label>
+							<input type="text" class="form-control" id="Latitude" name="Locations[0].Latitude">
+							<span asp-validation-for="Locations[0].Latitude" class="text-danger"></span>
+						</div>
+						<div class="col-md-6 mb-3">
+							<label for="Longitude" class="form-label">Boylam</label>
+							<input type="text" class="form-control" id="Longitude" name="Locations[0].Longitude">
+							<span asp-validation-for="Locations[0].Longitude" class="text-danger"></span>
+						</div>
+					</div>
+
+					<!-- Image Bilgisi -->
+					<h5 class="mt-4 mb-2">Görsel Yükle</h5>
+					<div class="mb-3">
+						<label for="ImagePath" class="form-label">Kavşak Görseli</label>
+						<input type="file" name="ImageFiles" class="imageUpload" multiple />
+						<div class="d-flex flex-wrap gap-2 mt-2 image-preview"></div>
+					</div>
+					<footer class="fixed-bottom bg-dark border-top border-warning py-2">
+						<div class="container text-center">
+							<button type="submit" class="btn btn-outline-warning w-100" style="position:sticky">Gönder</button>
+						</div>
+					</footer>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

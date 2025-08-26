@@ -1,0 +1,291 @@
+﻿@model EmployeeViewModel
+@{
+    ViewData["Title"] = "GetEmployee";
+    ViewData["Page"] = "getEmployee";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+
+    var intersectionCount = Model?.EmployeIntersections?.Count ?? 0;
+    var reportCount = Model?.EmployeeReports?.Count ?? 0;
+
+    var statusClass = string.Empty;
+
+    string Trunc(string? s, int n) =>
+        string.IsNullOrWhiteSpace(s) ? "-" : (s.Length > n ? s.Substring(0, n) + "..." : s);
+}
+
+<style>
+    dl.row > dt, dl.row > dd {
+        border-bottom: 1px solid #555;
+        padding: 8px 0;
+        margin: 0;
+    }
+
+        dl.row > dt[class*="col-"], dl.row > dd[class*="col-"] {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+    dl.row > dd {
+        padding-left: 10px !important;
+    }
+</style>
+
+<div class="container mt-4">
+
+    <!-- ÇALIŞAN KARTI -->
+    <div class="card bg-dark text-white border-warning shadow mb-4">
+        <div class="card-header border-warning d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">Çalışan Bilgileri</h3>
+        </div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Kullanıcı Adı:</dt>
+                <dd class="col-sm-9">@(Model?.UserName ?? "-")</dd>
+
+                <dt class="col-sm-3">Oluşturulma:</dt>
+                <dd class="col-sm-9">@Model.CreatedAt.ToString("dd.MM.yyyy")</dd>
+
+                <dt class="col-sm-3">Eklediği Kavşak:</dt>
+                <dd class="col-sm-9">@intersectionCount</dd>
+
+                <dt class="col-sm-3">Yazdığı Rapor:</dt>
+                <dd class="col-sm-9">@reportCount</dd>
+            </dl>
+        </div>
+    </div>
+
+    <!-- =================== CARD #1: KULLANICININ KAVŞAKLARI =================== -->
+    <div class="card bg-dark text-white border-warning shadow mb-4">
+        <div class="card-header border-warning">
+            <h5 class="mb-0">Kullanıcının Kavşakları (@intersectionCount)</h5>
+        </div>
+
+        <!-- Arama (Desktop) -->
+        <div class="input-group input-group-sm mt-2 ms-3 d-none d-md-flex" style="max-width:320px;">
+            <span class="input-group-text bg-dark text-white border-warning">Ara</span>
+            <input id="ixSearchD" type="text" class="form-control bg-dark text-white border-warning"
+                   placeholder="Kkc ID veya Başlık..." autocomplete="off">
+        </div>
+        <!-- Arama (Mobil) -->
+        <div class="input-group input-group-sm mt-2 d-flex d-md-none" style="max-width:100%;">
+            <span class="input-group-text bg-dark text-white border-warning">Ara</span>
+            <input id="ixSearchM" type="text" class="form-control bg-dark text-white border-warning"
+                   placeholder="Kkc ID veya Başlık..." autocomplete="off">
+        </div>
+
+        <div class="card-body">
+            @if (intersectionCount > 0)
+            {
+                <!-- Sonuç yok (Desktop) -->
+                <div id="ixNoResultD" class="d-none mt-1 d-none d-md-block">Aramanıza uygun sonuç bulunamadı.</div>
+
+                <!-- Desktop Tablo -->
+                <div class="table-responsive d-none d-md-block">
+                    <table class="table table-dark table-bordered table-sm align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width:60px">#</th>
+                                <th style="width:120px">Kkc ID</th>
+                                <th>Başlık</th>
+                                <th style="width:160px">Oluşturulma</th>
+                                <th style="width:120px">Durumu</th>
+                                <th style="width:120px">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < intersectionCount; i++)
+                            {
+                                var it = Model!.EmployeIntersections[i];
+                                <tr class="ix-item-d"
+                                    data-kkcid="@it.KkcID"
+                                    data-title="@(it.Title ?? string.Empty)">
+                                    <td>@(i + 1)</td>
+                                    <td>@it.KkcID</td>
+                                    <td>@(string.IsNullOrWhiteSpace(it.Title) ? "-" : it.Title)</td>
+                                    <td>@it.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                    <td class="@(it.IntersectionStatus ? "text-success" : "text-danger")">
+                                        @(it.IntersectionStatus ? "Aktif" : "Pasif")
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-sm btn-warning"
+                                           href="@Url.Action("Details", "Intersections", new { id = it.IntersectionID })">
+                                            Detay
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mobil Kartlar -->
+                <div class="d-block d-md-none mt-3">
+                    <!-- Sonuç yok (Mobil) -->
+                    <div id="ixNoResultM" class="d-none mt-1">Aramanıza uygun sonuç bulunamadı.</div>
+
+                    <div class="row row-cols-1 g-3">
+                        @for (int i = 0; i < intersectionCount; i++)
+                        {
+                            var it = Model!.EmployeIntersections[i];
+                            <div class="col ix-item-m"
+                                 data-kkcid="@it.KkcID"
+                                 data-title="@(it.Title ?? string.Empty)">
+                                <div class="card bg-dark border-warning text-white shadow-sm h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title mb-2">Kavşak #@(i + 1)</h6>
+                                        <p class="mb-1"><strong>Kkc ID:</strong> @it.KkcID</p>
+                                        <p class="mb-1"><strong>Başlık:</strong> @(string.IsNullOrWhiteSpace(it.Title) ? "-" : it.Title)</p>
+                                        <p class="mb-0"><strong>Oluşturulma:</strong> @it.CreatedAt.ToString("dd.MM.yyyy")</p>
+                                        <p class="mb-0">
+                                            <strong>Durumu:</strong>
+                                            <span class="@(it.IntersectionStatus ? "text-success" : "text-danger")">
+                                                @(it.IntersectionStatus ? "Aktif" : "Pasif")
+                                            </span>
+                                        </p>
+                                        <a class="btn btn-sm btn-warning mt-2"
+                                           href="@Url.Action("Details", "Intersections", new { id = it.IntersectionID })">
+                                            Detay
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Sayfalama -->
+                <ul id="ixPaginationD" class="pagination pagination-sm mb-0 mt-1 d-none d-md-flex"></ul>
+                <ul id="ixPaginationM" class="pagination pagination-sm mb-0 mt-1 d-flex d-md-none"></ul>
+            }
+            else
+            {
+                <div class="alert alert-secondary border-warning text-white bg-dark mb-0">
+                    Bu kullanıcıya ait kavşak bulunamadı.
+                </div>
+            }
+        </div>
+    </div>
+
+
+    <!-- =================== CARD #2: SON GİTTİĞİ KAVŞAKLAR (RAPORLAR) =================== -->
+    <div class="card bg-dark text-white border-warning shadow mb-4">
+        <div class="card-header border-warning">
+            <h5 class="mb-0">Kullanıcının Son Gittiği Kavşaklar (@reportCount)</h5>
+        </div>
+
+        <!-- Arama (Desktop) -->
+        <div class="input-group input-group-sm mt-2 ms-3 d-none d-md-flex" style="max-width:320px;">
+            <span class="input-group-text bg-dark text-white border-warning">Ara</span>
+            <input id="rpSearchD" type="text" class="form-control bg-dark text-white border-warning"
+                   placeholder="Kkc ID veya Başlık..." autocomplete="off">
+        </div>
+        <!-- Arama (Mobil) -->
+        <div class="input-group input-group-sm mt-2 d-flex d-md-none" style="max-width:100%;">
+            <span class="input-group-text bg-dark text-white border-warning">Ara</span>
+            <input id="rpSearchM" type="text" class="form-control bg-dark text-white border-warning"
+                   placeholder="Kkc ID veya Başlık..." autocomplete="off">
+        </div>
+
+        <div class="card-body">
+            @if (reportCount > 0)
+            {
+                <!-- Sonuç yok (Desktop) -->
+                <div id="rpNoResultD" class="d-none mt-1 d-none d-md-block">Aramanıza uygun sonuç bulunamadı.</div>
+
+                <!-- Desktop Tablo -->
+                <div class="table-responsive d-none d-md-block">
+                    <table class="table table-dark table-bordered table-sm align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width:60px">#</th>
+                                <th style="width:200px">Rapor Adı</th>
+                                <th style="width:160px">Oluşturulma</th>
+                                <th style="width:480px">Açıklama</th>
+                                <th>Kavşak</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < reportCount; i++)
+                            {
+                                var r = Model!.EmployeeReports[i];
+                                statusClass = r.IntersectionStatus ? "btn btn-outline-primary btn-sm" : "btn btn-outline-danger btn-sm";
+
+                                <tr class="rp-item-d"
+                                    data-kkcid="@r.KkcId"
+                                    data-title="@($"{r.ReportName} {r.IntersectionTitle}")">
+                                    <td>@(i + 1)</td>
+                                    <td>@(string.IsNullOrWhiteSpace(r.ReportName) ? "-" : r.ReportName)</td>
+                                    <td>@r.ReportDate.ToString("dd.MM.yyyy")</td>
+                                    <td>@Trunc(r.ReportDescription, 150)</td>
+                                    <td>
+                                        <a href="@Url.Action("Details", "Intersections", new { id = r.IntersectionID })"
+                                           class="@statusClass">
+                                            @r.KkcId - @(string.IsNullOrWhiteSpace(r.IntersectionTitle) ? "-" : r.IntersectionTitle)
+                                            <i class="bi bi-arrow-right"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mobil Kartlar -->
+                <div class="d-block d-md-none mt-3">
+                    <!-- Sonuç yok (Mobil) -->
+                    <div id="rpNoResultM" class="d-none mt-1">Aramanıza uygun sonuç bulunamadı.</div>
+
+                    <div class="row row-cols-1 g-3">
+                        @for (int i = 0; i < reportCount; i++)
+                        {
+                            var r = Model!.EmployeeReports[i];
+                            statusClass = r.IntersectionStatus ? "btn btn-outline-primary btn-sm" : "btn btn-outline-danger btn-sm";
+
+                            <div class="col rp-item-m"
+                                 data-kkcid="@r.KkcId"
+                                 data-title="@($"{r.ReportName} {r.IntersectionTitle}")">
+                                <div class="card bg-dark border-warning text-white shadow-sm h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title mb-2">Rapor #@(i + 1)</h6>
+                                        <p class="mb-1"><strong>Rapor Adı:</strong> @(string.IsNullOrWhiteSpace(r.ReportName) ? "-" : r.ReportName)</p>
+                                        <p class="mb-1"><strong>Oluşturulma:</strong> @r.ReportDate.ToString("dd.MM.yyyy")</p>
+                                        <p class="mb-1"><strong>Açıklama:</strong> @Trunc(r.ReportDescription, 100)</p>
+                                        <a href="@Url.Action("Details", "Intersections", new { id = r.IntersectionID })"
+                                           class="@statusClass mt-2">
+                                            @r.KkcId - @(string.IsNullOrWhiteSpace(r.IntersectionTitle) ? "-" : r.IntersectionTitle)
+                                            <i class="bi bi-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Sayfalama -->
+                <ul id="rpPaginationD" class="pagination pagination-sm mb-0 mt-1 d-none d-md-flex"></ul>
+                <ul id="rpPaginationM" class="pagination pagination-sm mb-0 mt-1 d-flex d-md-none"></ul>
+            }
+            else
+            {
+                <div class="alert alert-secondary border-warning text-white bg-dark mb-0">
+                    Bu kullanıcıya ait rapor bulunamadı.
+                </div>
+            }
+        </div>
+    </div>
+
+
+    <div class="d-flex flex-wrap gap-2 my-4">
+        <a href="@Url.Action("AllEmployees", "Employee")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Geri Dön
+        </a>
+        <button data-id="@Model.UserID" class="btn btn-danger btn-user-delete">
+            <i class="bi bi-trash"></i> Sil
+        </button>
+    </div>
+
+    @section Scripts {
+        <script src="~/js/employeepage.js"></script>
+    }
+</div>

@@ -1,0 +1,44 @@
+﻿@model Intersections_EmployeeTrackingSystem.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow border-0">
+                <div class="card-header bg-dark text-white text-center">
+                    <h3>Giriş Yap</h3>
+                </div>
+                <div class="card-body bg-dark">
+
+                    <!-- Validation summary -->
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <form asp-action="Login" method="post" autocomplete="off">
+                        <div class="mb-3">
+                            <label asp-for="UserEmail" class="form-label">Kullanıcı Maili</label>
+                            <input asp-for="UserEmail" class="form-control" placeholder="Maili girin"/>
+                            <span asp-validation-for="UserEmail" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label">Şifre</label>
+                            <input asp-for="Password" class="form-control" type="password" placeholder="Şifrenizi girin" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100">Giriş Yap</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

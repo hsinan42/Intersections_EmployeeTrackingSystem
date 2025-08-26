@@ -1,0 +1,14 @@
+﻿@model int
+
+@{
+    Layout = null;
+}
+
+@if (Model > 0)
+{
+    <span class="badge bg-primary text-light">@Model</span>
+}
+else
+{
+    <span class="badge bg-secondary">0</span>
+}

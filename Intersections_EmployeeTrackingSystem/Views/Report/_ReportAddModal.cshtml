@@ -1,0 +1,54 @@
+﻿@model ReportsViewModel
+
+@{
+	Layout = null;
+}
+
+<style>
+	#reportForm input {
+		color: #fff;
+		border: solid 1px black;
+		border-radius: 5px;
+		background: rgba(156, 156, 156, 0.36);
+	}
+
+	#reportForm textarea {
+		color: #fff;
+		border: solid 1px black;
+		border-radius: 5px;
+		background: rgba(156, 156, 156, 0.36);
+	}
+</style>
+
+<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-sm">
+		<div class="modal-content bg-dark text-white">
+			<div class="modal-header border-0">
+				<h4 class="modal-title w-100 text-center border-bottom border-3 border-warning pb-2" id="reportModalLabel">Rapor Ekle</h4>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+			</div>
+
+			<div class="modal-body">
+				<form method="post" asp-controller="Report" asp-action="AddReport" id="reportForm">
+
+					@* ID Info *@
+					<input asp-for="IntersectionID" type="hidden" />
+					<input asp-for="UserID" type="hidden" />
+					<div class="mb-3">
+						<label asp-for="ReportName" class="form-label">Rapor Başlığı</label>
+						<input asp-for="ReportName" class="form-control" />
+						<span asp-validation-for="ReportName" class="text-danger"></span>
+					</div>
+
+					<div class="mb-3">
+						<label asp-for="ReportDescription" class="form-label">Rapor Açıklaması</label>
+						<textarea asp-for="ReportDescription" class="form-control"></textarea>
+						<span asp-validation-for="ReportDescription" class="text-danger"></span>
+					</div>
+
+					<button type="submit" class="btn btn-outline-warning w-100">Ekle</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

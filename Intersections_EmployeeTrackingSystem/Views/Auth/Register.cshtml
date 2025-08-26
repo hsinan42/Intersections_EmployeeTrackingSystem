@@ -1,0 +1,65 @@
+﻿@model Intersections_EmployeeTrackingSystem.Models.RegisterViewModel
+
+@{
+	ViewData["Title"] = "Register";
+	Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div id="card" class="col-md-6 col-lg-5">
+            <div class="card shadow border-0">
+                <div class="card-header bg-dark text-white text-center">
+                    <h3>Kayıt Ol</h3>
+                </div>
+                <div class="card-body bg-opacity-25 bg-dark">
+
+                    <!-- Validation summary -->
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <form asp-action="Register" method="post" autocomplete="off">
+                        <div class="mb-3">
+                            <label asp-for="UserName" class="form-label">Kullanıcı Adı</label>
+                            <input asp-for="UserName" class="form-control" placeholder="Kullanıcı adınızı girin" />
+                            <span asp-validation-for="UserName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="UserEmail" class="form-label">E-posta</label>
+                            <input asp-for="UserEmail" class="form-control" placeholder="E-posta adresinizi girin" />
+                            <span asp-validation-for="UserEmail" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Role" class="form-label">Hesap Rolü</label>
+                            <select asp-for="Role" class="form-control">
+                                <option value="Admin">
+                                    Admin
+                                </option>
+                                <option value="User">
+                                    Çalışan
+                                </option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label">Şifre</label>
+                            <input asp-for="Password" class="form-control" type="password" placeholder="Şifrenizi girin" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ConfirmPassword" class="form-label">Şifre Tekrar</label>
+                            <input asp-for="ConfirmPassword" class="form-control" type="password" placeholder="Şifrenizi tekrar girin" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100">Kayıt Ol</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
